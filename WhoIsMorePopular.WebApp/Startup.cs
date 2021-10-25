@@ -1,13 +1,14 @@
 using Akka.Actor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WhoIsMorePopular.Common;
 using WhoIsMorePopular.WebApp.Controllers;
+using WhoIsMorePopular.WebApp.Services;
+using IApplicationLifetime = Microsoft.AspNetCore.Hosting.IApplicationLifetime;
 
 namespace WhoIsMorePopular.WebApp
 {
@@ -18,24 +19,16 @@ namespace WhoIsMorePopular.WebApp
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        private IConfiguration Configuration { get; }
+        
         public void ConfigureServices(IServiceCollection services)
         {
-            var hocon = HoconLoader.FromFile("akka.net.hocon");
-            var actorSystem = ActorSystem.Create("calculator-actor-system", hocon);
-
-            services.AddSingleton(typeof(ActorSystem), (serviceProvider) => actorSystem);
-            services.AddSingleton(typeof(ICalculatorActorInstance), typeof(CalculatorActorInstance));
-            
+            services.AddAkkaService();
             services.AddControllersWithViews();
 
-            // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -45,7 +38,6 @@ namespace WhoIsMorePopular.WebApp
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -71,6 +63,16 @@ namespace WhoIsMorePopular.WebApp
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+            /*
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
+            });
+            lifetime.ApplicationStopping.Register(() =>
+            {
+                app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
+            });
+            */
         }
     }
 }

@@ -6,7 +6,7 @@ namespace WhoIsMorePopular.Server
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             var hocon = HoconLoader.FromFile("akka.net.hocon");
             var system = ActorSystem.Create("server-system", hocon);
