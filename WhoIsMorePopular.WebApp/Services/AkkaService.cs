@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Microsoft.Extensions.DependencyInjection;
 using WhoIsMorePopular.Common;
 using WhoIsMorePopular.WebApp.Actors;
-using WhoIsMorePopular.WebApp.Controllers;
 using WhoIsMorePopular.WebApp.Providers;
 
 namespace WhoIsMorePopular.WebApp.Services

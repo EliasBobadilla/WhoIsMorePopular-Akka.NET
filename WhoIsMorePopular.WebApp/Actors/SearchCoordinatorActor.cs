@@ -14,7 +14,7 @@ namespace WhoIsMorePopular.WebApp.Actors
         private IActorRef _parentActor;
         
         /** Responses from children */
-        private readonly List<List<SearchResponse>> _responses = new();
+        private readonly List<List<SearchResult>> _responses = new();
         
         public SearchCoordinatorActor()
         {
@@ -23,11 +23,16 @@ namespace WhoIsMorePopular.WebApp.Actors
             {
                 _parentActor = Sender;
                 _providerCounter = message.Providers.Count();
-                _ = message.Providers.Select(provider => Context.ActorOf(Props.Create(()=> new TempActor(provider, message.Words))));
+                
+                foreach (var provider in message.Providers)
+                {
+                    Context.ActorOf(Props.Create(() => new SearchActor(provider, message.Words)));
+                }
+                // _ = message.Providers.Select(provider => Context.ActorOf(Props.Create(()=> new SearchActor(provider, message.Words))));
             });
 
             // receive from child
-            Receive<List<SearchResponse>>(message =>
+            Receive<List<SearchResult>>(message =>
             {
                 _providerCounter -= 1;
                 _responses.Add(message);
@@ -35,11 +40,15 @@ namespace WhoIsMorePopular.WebApp.Actors
             });
         }
 
-        private static SearchResponseDto BuildResponse(IEnumerable<IEnumerable<SearchResponse>> responses)
+        private static SearchResponseDto BuildResponse(IEnumerable<IEnumerable<SearchResult>> responses)
         {
+            // here build the new responses
             var flattened = responses.SelectMany(item => item);
             var grouped = flattened.GroupBy(x => x.ProviderName);
-            return new SearchResponseDto();
+            return new SearchResponseDto()
+            {
+                Winner = "Elias"
+            };
         }
         
     }

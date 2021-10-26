@@ -21,11 +21,13 @@ namespace WhoIsMorePopular.WebApp.Providers
         /// </summary>
         /// <param name="searchValue">Value to search</param>
         /// <returns>Total search result</returns>
-        public async Task<string> Search(string searchValue)
+        public async Task<long> Search(string searchValue)
         {
             var url = BuildUri(searchValue);
             using var client = new HttpClient();
-            return await client.GetStringAsync(url);
+            var response = await client.GetStringAsync(url);
+            // return GetTotal(response);
+            return 100000;
         }
 
         /// <summary>

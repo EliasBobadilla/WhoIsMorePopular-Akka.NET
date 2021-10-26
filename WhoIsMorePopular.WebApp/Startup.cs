@@ -1,14 +1,10 @@
-using Akka.Actor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using WhoIsMorePopular.Common;
-using WhoIsMorePopular.WebApp.Controllers;
 using WhoIsMorePopular.WebApp.Services;
-using IApplicationLifetime = Microsoft.AspNetCore.Hosting.IApplicationLifetime;
 
 namespace WhoIsMorePopular.WebApp
 {
@@ -68,16 +64,6 @@ namespace WhoIsMorePopular.WebApp
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-            /*
-            lifetime.ApplicationStarted.Register(() =>
-            {
-                app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
-            });
-            lifetime.ApplicationStopping.Register(() =>
-            {
-                app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
-            });
-            */
         }
     }
 }

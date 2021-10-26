@@ -1,42 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Akka.Actor;
-using Akka.Util.Internal;
+﻿using Akka.Actor;
+using WhoIsMorePopular.WebApp.Messages;
 
 namespace WhoIsMorePopular.WebApp.Actors
 {
-    public class SearchManagerActor : UntypedActor
+    public class SearchManagerActor : ReceiveActor
     {
-        protected override void OnReceive(object message)
+        /** Actor handler for each request **/
+        public SearchManagerActor()
         {
-            var request = message as RequestMessage;
-            SearchValue(request);
-        }
-
-        private static void SearchValue(RequestMessage message)
-        {
-            foreach (var provider in message.Providers)
+            Receive<RequestMessage>(request =>
             {
-                var searchActor = Context.ActorOf(Props.Create(() => new SearchActor(provider)));
-                var taskList = message.Words.Select(word => searchActor.Ask<string>(word)).ToArray();
-                Task.WhenAll(taskList);
-                foreach (var task in taskList)
-                {
-                    Console.WriteLine($"Response => {task.Result}");
-                }
-                
-            }
-            
-            /*
-             foreach (var word in message.Words)
-                {
-                    tasks.Add(Task.Run(() => { searchActor.Ask<string>(word); }));
-                    // var resp = await searchActor.Ask<string>(word);
-                    // Console.WriteLine($"Response => {resp}");
-                }
-             */
+                Context.ActorOf(Props.Create(() => new SearchCoordinatorActor())).Forward(request);
+            });
         }
     }
 }
