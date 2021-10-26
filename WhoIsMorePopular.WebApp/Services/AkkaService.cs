@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Akka.Actor;
 using Microsoft.Extensions.DependencyInjection;
 using WhoIsMorePopular.Common;
@@ -13,14 +15,13 @@ namespace WhoIsMorePopular.WebApp.Services
         public static void AddAkkaService(this IServiceCollection services)
         {
             var hocon = HoconLoader.FromFile("akka.net.hocon");
-            // var actorSystem = ActorSystem.Create("search-actor-system", hocon);
             services.AddSingleton(_ => ActorSystem.Create("search-actor-system", hocon)); // ActorSystem
             
             services.AddSingleton<SearchManagerActorProvider>(provider =>
             {
                 var actorSystem = provider.GetService<ActorSystem>();
-                if (actorSystem == null) return null;
-                return () => actorSystem.ActorOf(Props.Create(() => new SearchManagerActor()),"search-manager");
+                if (actorSystem is null) return null;
+                return () => actorSystem.ActorOf(Props.Create(() => new SearchManagerActor()));
             });
         }
     }

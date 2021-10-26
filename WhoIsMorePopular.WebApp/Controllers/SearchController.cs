@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Akka.Actor;
 using Microsoft.AspNetCore.Mvc;
-using WhoIsMorePopular.Common;
+using WhoIsMorePopular.WebApp.Actors;
 using WhoIsMorePopular.WebApp.Providers;
 
 namespace WhoIsMorePopular.WebApp.Controllers
@@ -11,18 +12,22 @@ namespace WhoIsMorePopular.WebApp.Controllers
     public class SearchController : ControllerBase
     {
         private readonly IActorRef _searchManagerActor;
+        private readonly IEnumerable<ISearchProvider> _providers;
 
-        public SearchController(SearchManagerActorProvider searchManagerActor)
+        public SearchController(SearchManagerActorProvider searchManagerActor, IEnumerable<ISearchProvider> providers)
         {
             _searchManagerActor = searchManagerActor();
+            _providers = providers;
         }
 
-        [HttpGet("{list}")]
-        public string Search(string list)
+        [HttpGet("{values}")]
+        public IActionResult Search(string values)
         {
-            var response = $"Response => {list}";
-            _searchManagerActor.Tell(list);
-            return response;
+            var message = new RequestMessage(values, _providers);
+            if(!message.Words.Any()) return BadRequest("You must write one word at least");
+            
+            _searchManagerActor.Tell(message);
+            return Ok("The fight has been started.");
         }
     }
 }

@@ -37,7 +37,7 @@ export const FightContainer = () => {
         console.log('values =>', values)
 
         var query = encodeURIComponent(values);
-        const response = await fetch(`Fight/${query}`);
+        const response = await fetch(`Search/${query}`);
         const data = await response.json();
         console.log('response =>', data)
     }

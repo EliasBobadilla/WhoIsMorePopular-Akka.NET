@@ -1,36 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Util.Internal;
 
 namespace WhoIsMorePopular.WebApp.Actors
 {
-    public class SearchManagerActor: UntypedActor
+    public class SearchManagerActor : UntypedActor
     {
-        public SearchManagerActor()
-        {
-            Console.WriteLine("CalculatorActor constructor");
-        }
-        
-        
         protected override void OnReceive(object message)
         {
-            var msg = message as string;
-            
-            switch (msg)
+            var request = message as RequestMessage;
+            SearchValue(request);
+        }
+
+        private static void SearchValue(RequestMessage message)
+        {
+            foreach (var provider in message.Providers)
             {
-                case "uno":
+                var searchActor = Context.ActorOf(Props.Create(() => new SearchActor(provider)));
+                var taskList = message.Words.Select(word => searchActor.Ask<string>(word)).ToArray();
+                Task.WhenAll(taskList);
+                foreach (var task in taskList)
                 {
-                    Console.WriteLine("LLEGO UN UNO");
-                    break;
+                    Console.WriteLine($"Response => {task.Result}");
                 }
-                case "dos":
-                {
-                    Console.WriteLine("LLEGO UN DOS");
-                    break;
-                }
-                default:
-                    Console.WriteLine("LLEGO NADA");
-                    break;
+                
             }
+            
+            /*
+             foreach (var word in message.Words)
+                {
+                    tasks.Add(Task.Run(() => { searchActor.Ask<string>(word); }));
+                    // var resp = await searchActor.Ask<string>(word);
+                    // Console.WriteLine($"Response => {resp}");
+                }
+             */
         }
     }
 }

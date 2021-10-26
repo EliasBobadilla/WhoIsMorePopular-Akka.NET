@@ -14,16 +14,21 @@ namespace WhoIsMorePopular.WebApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         private IConfiguration Configuration { get; }
         
+        public Startup(IHostEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", false, true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true);
+            Configuration = builder.Build();
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAkkaService();
+            services.ConfigureServices(Configuration);
             services.AddControllersWithViews();
 
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
