@@ -32,7 +32,7 @@ When the SearchCoordinatorActor actor is created, it creates a **SearchActor** a
 
 When the SearchCoordinatorActor actor receives the result of all the SearchActors, it calculates the result of the searches and returns it to the controller.
 
-The flow is something similar like this:
+The flow is something like this:
 
 ![](https://i.ibb.co/n7hyLwx/Flowchart.jpg
 )
