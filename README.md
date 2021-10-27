@@ -1,6 +1,9 @@
 # WhoIsMorePopular - Akka.NET
 Akka.Net is an open source, distributed computing framework built by Petabridge. It allows you to create scalable, resilient, concurrent, event-driven applications using the actor model. 
 
+![](https://i.ibb.co/9YqwTwK/Capture.png)
+
+
 **The goal of this project is to understand how the actor model works with Akka.NET through a simple application.**
 
 ## WhoIsMorePopular.Common
@@ -34,6 +37,5 @@ When the SearchCoordinatorActor actor receives the result of all the SearchActor
 
 The flow is something like this:
 
-![](https://i.ibb.co/n7hyLwx/Flowchart.jpg
-)
+![](https://i.ibb.co/n7hyLwx/Flowchart.jpg)
 
