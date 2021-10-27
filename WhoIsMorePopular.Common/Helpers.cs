@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace WhoIsMorePopular.Common
 {
@@ -18,19 +17,11 @@ namespace WhoIsMorePopular.Common
             return values.First();
         }
         
-        public static string OnlyNumbers(this string value)
+        public static long OnlyNumbers(this string value)
         {
-            return string.IsNullOrWhiteSpace(value) ? "0" : new string(value.Where(char.IsDigit).ToArray());
-        }
-        
-        public static int GetMaxLength(this IEnumerable<string> values)
-        {
-            return values.Select(value => value.Length).Prepend(0).Max() + 1;
-        }
-        
-        public static string FixLength(this string value, int len)
-        {
-            return value.PadRight(len);
+            if (string.IsNullOrWhiteSpace(value)) return 0;
+            var number = new string(value.Where(char.IsDigit).ToArray());
+            return number.Length > 10 ? 0 : long.Parse(number);
         }
         
         public static string TextToQuery(this string text)

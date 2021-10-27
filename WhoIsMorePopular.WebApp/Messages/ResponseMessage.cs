@@ -18,7 +18,7 @@ namespace WhoIsMorePopular.WebApp.Messages
     public record SearchResponseDto
     {
         public List<ResultDetailDto> ResultDetail { get; init; }
-        public List<ProviderDetailDto> ProviderDetailDto { get; init; }
+        public List<ProviderDetailDto> ProviderDetail { get; init; }
         public string Winner { get; set; }
     }
 }

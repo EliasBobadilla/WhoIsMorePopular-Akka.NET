@@ -13,7 +13,7 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'Poppins', sans-serif;
-    color: #4b4b4b;
+    color: #707070;
     font-size: 14px;
     height: 100%;
     margin: 0;

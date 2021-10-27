@@ -51,8 +51,7 @@ namespace WhoIsMorePopular.WebApp.Providers
         {
             const string left = "<span class=\"sb_count\">";
             const string right = "</span>";
-            var total = html.GetTextBetween(left, right).OnlyNumbers();
-            return long.Parse(total);
+            return html.GetTextBetween(left, right).OnlyNumbers();
         }
         
         #endregion

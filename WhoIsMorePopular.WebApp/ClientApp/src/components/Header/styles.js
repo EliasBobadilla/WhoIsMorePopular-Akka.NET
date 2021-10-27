@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Container = styled.header`
     display:flex;
     flex-direction: column;
-    margin: 50px 0 25px 0;
+    margin: 50px 0 0 0;
 `
 
 export const Img = styled.img`

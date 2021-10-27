@@ -10,4 +10,7 @@ export const Container = styled.div`
   align-content: center;
   align-items: center;
   margin: auto;
+  gap: 15px;
+  overflow-y: auto;
+  padding-bottom: 15px
 `

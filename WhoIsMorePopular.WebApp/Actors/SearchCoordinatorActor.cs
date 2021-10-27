@@ -45,7 +45,7 @@ namespace WhoIsMorePopular.WebApp.Actors
             return new SearchResponseDto
             {
                 ResultDetail = detail,
-                ProviderDetailDto = providerDetail,
+                ProviderDetail = providerDetail,
                 Winner = GetWinner(detail)
             };
         }
