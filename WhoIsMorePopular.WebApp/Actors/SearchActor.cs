@@ -9,15 +9,15 @@ namespace WhoIsMorePopular.WebApp.Actors
         private readonly ISearchProvider _provider;
         private readonly List<SearchResult> _responses = new(); 
         
-        public SearchActor(ISearchProvider provider, string[] words)
+        public SearchActor(ISearchProvider provider, IReadOnlyCollection<string> words)
         {
             _provider = provider;
-            var wordCounter = words.Length;
+            var wordCounter = words.Count;
             StartSearch(words);
             
             // receive from himself
             Receive<SearchResult>(response =>
-            { 
+            {
                 wordCounter -= 1;
                 _responses.Add(response);
                 if (wordCounter is not 0) return;
@@ -30,23 +30,20 @@ namespace WhoIsMorePopular.WebApp.Actors
         {
             foreach (var word in words)
             {
-                _provider.Search(word).ContinueWith(res => new SearchResult(word, res.Result, _provider.Name)).PipeTo(Self);
+                _provider.Search(word).ContinueWith(res => new SearchResult
+                {
+                    Word = word,
+                    Total = res.Result,
+                    ProviderName = _provider.Name
+                }).PipeTo(Self);
             }
         }
-        
     }
     
     public record SearchResult
     {
-        public string Word { get;  }
-        public long Total { get; }
-        public string ProviderName { get; }
-
-        public SearchResult(string word, long total, string providerName)
-        {
-            Word = word;
-            Total = total;
-            ProviderName = providerName;
-        }
+        public string Word { get; init; }
+        public long Total { get; init; }
+        public string ProviderName { get; init; }
     }
 }

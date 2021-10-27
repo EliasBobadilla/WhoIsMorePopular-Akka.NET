@@ -8,7 +8,7 @@ namespace WhoIsMorePopular.WebApp.Providers
     public class BingSearchProvider: ISearchProvider
     {
         private readonly BingSettings _settings;
-        public string Name { get; } = "Microsoft Bing";
+        public string Name => "Microsoft Bing";
 
         public BingSearchProvider(BingSettings settings)
         {
@@ -22,24 +22,10 @@ namespace WhoIsMorePopular.WebApp.Providers
         /// <returns>Total search result</returns>
         public async Task<long> Search(string searchValue)
         {
-            var url = BuildUri(searchValue);
+            var url = BuildUri(searchValue, _settings.Url);
             var client = new WebClient();
             var response = await client.DownloadStringTaskAsync(url);
-            // return GetTotal(response);
-            return 100000;
-        }
-
-        /// <summary>
-        ///     Method to extract the total search result
-        /// </summary>
-        /// <param name="html">html text</param>
-        /// <returns>Total search result</returns>
-        public long GetTotal(string html)
-        {
-            const string left = "<span class=\"sb_count\">";
-            const string right = "</span>";
-            var total = html.GetTextBetween(left, right).OnlyNumbers();
-            return long.Parse(total);
+            return GetTotal(response);
         }
 
         #region private methods
@@ -48,14 +34,27 @@ namespace WhoIsMorePopular.WebApp.Providers
         ///     Method to build the url for Web scraping
         /// </summary>
         /// <param name="searchValue">Value to search</param>
+        /// <param name="url">Bing url</param>
         /// <returns>Formatted url</returns>
-        private string BuildUri(string searchValue)
+        private static string BuildUri(string searchValue, string url)
         {
             var value = searchValue.TextToQuery();
-            return
-                $"{_settings.Url}?q={value}&form=QBLH&sp=-1&pq={value}&sc=8-{value.Length}&qs=n&sk=&cvid=5BBCEE4978DC444C9B29633585E809DA";
+            return $"{url}?q={value}&isRef=1&showTw=1&form=GEODTAS&cc=US&setlang=en-US";
         }
 
+        /// <summary>
+        ///     Method to extract the total search result
+        /// </summary>
+        /// <param name="html">html text</param>
+        /// <returns>Total search result</returns>
+        private static long GetTotal(string html)
+        {
+            const string left = "<span class=\"sb_count\">";
+            const string right = "</span>";
+            var total = html.GetTextBetween(left, right).OnlyNumbers();
+            return long.Parse(total);
+        }
+        
         #endregion
     }
 }

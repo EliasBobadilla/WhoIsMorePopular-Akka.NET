@@ -2,23 +2,23 @@
 
 namespace WhoIsMorePopular.WebApp.Messages
 {
-    public class ResultDetailDto
+    public record ResultDetailDto
     {
-        public string Word { get; set; }
-        public string Provider { get; set; }
-        public long Total { get; set; }
+        public string Word { get; init; }
+        public string Provider { get; init; }
+        public long Total { get; init; }
     }
 
-    public class ProviderDetailDto
+    public record ProviderDetailDto
     {
-        public string Provider { get; set; }
-        public string Winner { get; set; }
+        public string Provider { get; init; }
+        public string Winner { get; init; }
     }
 
-    public class SearchResponseDto
+    public record SearchResponseDto
     {
-        public List<ResultDetailDto> ResultDetail { get; set; }
-        public List<ProviderDetailDto> ProviderDetailDto { get; set; }
+        public List<ResultDetailDto> ResultDetail { get; init; }
+        public List<ProviderDetailDto> ProviderDetailDto { get; init; }
         public string Winner { get; set; }
     }
 }

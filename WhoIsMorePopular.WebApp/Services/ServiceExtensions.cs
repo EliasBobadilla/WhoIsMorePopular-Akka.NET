@@ -15,7 +15,7 @@ namespace WhoIsMorePopular.WebApp.Services
             services.AddSingleton(googleSettings);
             services.AddSingleton(bingSettings);
             services.AddScoped<ISearchProvider, BingSearchProvider>();
-            services.AddScoped<ISearchProvider, GoogleSearchProvider>();
+            // services.AddScoped<ISearchProvider, GoogleSearchProvider>();
         }
     }
 }

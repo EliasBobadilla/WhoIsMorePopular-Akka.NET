@@ -9,13 +9,13 @@ namespace WhoIsMorePopular.WebApp.Actors
     {
         /** Number of providers in this request **/
         private int _providerCounter;
-        
+
         /** Manager actor context **/
         private IActorRef _parentActor;
-        
+
         /** Responses from children */
         private readonly List<List<SearchResult>> _responses = new();
-        
+
         public SearchCoordinatorActor()
         {
             // receive from parent
@@ -23,12 +23,9 @@ namespace WhoIsMorePopular.WebApp.Actors
             {
                 _parentActor = Sender;
                 _providerCounter = message.Providers.Count();
-                
+
                 foreach (var provider in message.Providers)
-                {
                     Context.ActorOf(Props.Create(() => new SearchActor(provider, message.Words)));
-                }
-                // _ = message.Providers.Select(provider => Context.ActorOf(Props.Create(()=> new SearchActor(provider, message.Words))));
             });
 
             // receive from child
@@ -40,16 +37,45 @@ namespace WhoIsMorePopular.WebApp.Actors
             });
         }
 
-        private static SearchResponseDto BuildResponse(IEnumerable<IEnumerable<SearchResult>> responses)
+        private static SearchResponseDto BuildResponse(IEnumerable<IReadOnlyCollection<SearchResult>> responses)
         {
-            // here build the new responses
-            var flattened = responses.SelectMany(item => item);
-            var grouped = flattened.GroupBy(x => x.ProviderName);
-            return new SearchResponseDto()
+            var detail = GetDetail(responses);
+            var providerDetail = GetProviderDetails(detail);
+
+            return new SearchResponseDto
             {
-                Winner = "Elias"
+                ResultDetail = detail,
+                ProviderDetailDto = providerDetail,
+                Winner = GetWinner(detail)
             };
         }
-        
+
+        private static List<ResultDetailDto> GetDetail(IEnumerable<IReadOnlyCollection<SearchResult>> responses)
+        {
+            return responses.SelectMany(item => item)
+                .Select(x => new ResultDetailDto
+                {
+                    Word = x.Word,
+                    Provider = x.ProviderName,
+                    Total = x.Total
+                }).ToList();
+        }
+
+        private static List<ProviderDetailDto> GetProviderDetails(IReadOnlyCollection<ResultDetailDto> details)
+        {
+            var providers = details.Select(x => x.Provider).Distinct().ToList();
+
+            return (from provider in providers
+                let maxTotal = details.Where(x => x.Provider.Equals(provider)).Max(x => x.Total)
+                let item = details.FirstOrDefault(x => x.Total.Equals(maxTotal))
+                select new ProviderDetailDto {Provider = provider, Winner = item.Word}).ToList();
+        }
+
+        private static string GetWinner(IReadOnlyCollection<ResultDetailDto> details)
+        {
+            var maxTotal = details.Max(x => x.Total);
+            var winner = details.FirstOrDefault(x => x.Total.Equals(maxTotal));
+            return winner?.Word;
+        }
     }
 }

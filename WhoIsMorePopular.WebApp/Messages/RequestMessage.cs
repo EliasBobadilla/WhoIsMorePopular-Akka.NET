@@ -13,7 +13,7 @@ namespace WhoIsMorePopular.WebApp.Messages
         public RequestMessage(string message, IEnumerable<ISearchProvider> providers)
         {
             if (message.IsNullOrEmptyOrWhiteSpace()) return;
-            Words = message.Split(",").Select(item => item.Trim()).ToArray();
+            Words = message.Split(",").Where(item => !item.Trim().IsNullOrEmptyOrWhiteSpace()).Select(item => item.Trim()).ToArray();
             Providers = providers;
         }
     }

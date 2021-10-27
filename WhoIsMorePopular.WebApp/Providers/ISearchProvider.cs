@@ -6,6 +6,5 @@ namespace WhoIsMorePopular.WebApp.Providers
     {
         string Name { get; }
         Task<long> Search(string searchValue);
-        long GetTotal(string value);
     }
 }
